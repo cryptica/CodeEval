@@ -1,3 +1,7 @@
+# Vim swap files
+*.swp
+
+# Haskell files
 dist
 cabal-dev
 *.o
@@ -5,3 +9,6 @@ cabal-dev
 *.chi
 *.chs.h
 .virthualenv
+
+# Compiled binaries
+main
