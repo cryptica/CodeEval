@@ -12,3 +12,6 @@ cabal-dev
 
 # Compiled binaries
 main
+
+# Program output
+*.out
