@@ -1,5 +1,7 @@
 module Main where
 
+import Data.List (partition)
+
 nextMoves :: Int -> [(Int,Int)] -> [(Int,Int)]
 nextMoves _ [] = error "Empty path is not valid"
 nextMoves n path@((x,y):_) =
@@ -15,12 +17,16 @@ appendNextMoves n path@((x,y):_) =
         let next = nextMoves n path
         in  [ (x',y'):path | (x',y') <- next ]
 
-appendAllNextMovements :: Int -> [[(Int,Int)]] -> [[(Int,Int)]]
-appendAllNextMovements n paths = concatMap (appendNextMoves n) paths
+findFinishingPaths :: Int -> [[(Int,Int)]] -> [[(Int,Int)]]
+findFinishingPaths _ [] = []
+findFinishingPaths n paths =
+    let nextPaths = concatMap (appendNextMoves n) paths
+        (finished, unfinished) = partition (\p -> head p == (n-1,n-1)) nextPaths
+    in  findFinishingPaths n unfinished ++ finished
 
 countMovements :: Int -> Int
 countMovements 4 = 184
-countMovements n = length ((iterate (appendAllNextMovements n) [[(0,0)]]) !! (n*n))
+countMovements n = length (findFinishingPaths n [[(0,0)]])
 
 main :: IO ()
 main = do
