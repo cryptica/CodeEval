@@ -2,8 +2,8 @@ module Main where
 
 import System.Environment (getArgs)
 import qualified Data.Map as Map
-import qualified Data.Text as T
-import qualified Data.Text.IO as TIO
+import qualified Data.Text.Lazy as T
+import qualified Data.Text.Lazy.IO as TIO
 
 insertUpdateLookup :: (Ord k) => (a -> a) -> k -> a -> Map.Map k a -> (a, Map.Map k a)
 insertUpdateLookup f key val m =
