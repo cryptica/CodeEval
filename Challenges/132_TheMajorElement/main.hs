@@ -2,13 +2,8 @@ module Main where
 
 import System.Environment (getArgs)
 import qualified Data.Map as Map
-
-splitBy :: Char -> String -> [String]
-splitBy c s =
-    case dropWhile (== c) s of
-        "" -> []
-        s' -> w : splitBy c s''
-            where (w, s'') = break (== c) s'
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
 
 insertUpdateLookup :: (Ord k) => (a -> a) -> k -> a -> Map.Map k a -> (a, Map.Map k a)
 insertUpdateLookup f key val m =
@@ -26,17 +21,17 @@ majorElement' target m (l:ls) =
 majorElement :: (Ord k) => [k] -> Maybe k
 majorElement ls = majorElement' (length ls `div` 2) Map.empty ls
 
-processLine :: String -> String
+processLine :: T.Text -> T.Text
 processLine line =
-    let elements = splitBy ',' line
+    let elements = T.split (==',') line
         major = majorElement elements
     in  case major of
-            Nothing -> "None"
+            Nothing -> T.pack "None"
             Just m -> m
 
 main :: IO ()
 main = do
     [inputFile] <- getArgs
-    input <- readFile inputFile
-    mapM_ putStrLn $ map processLine $ lines input
+    input <- TIO.readFile inputFile
+    mapM_ TIO.putStrLn $ map processLine $ T.lines input
 
