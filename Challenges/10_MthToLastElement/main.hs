@@ -1,7 +1,6 @@
 module Main where
 
 import System.Environment(getArgs)
-import Control.Applicative
 
 processLine :: String -> Maybe String
 processLine line =
