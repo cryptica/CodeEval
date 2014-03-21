@@ -3,6 +3,7 @@ module Main where
 import System.Environment (getArgs)
 import Data.List (elemIndex)
 import Data.Maybe (fromJust)
+import Data.Monoid
 
 replaceChar :: String -> Int -> Char -> String
 replaceChar s i c =
@@ -12,12 +13,8 @@ replaceChar s i c =
 race' :: [String] -> Int -> [String]
 race' [] _ = []
 race' (x:xs) pos =
-    let pos' = case elemIndex 'C' x of
-            Just p -> p
-            Nothing -> fromJust $ elemIndex '_' x
-        sym = if pos < 0 || pos' == pos then '|'
-              else if pos' < pos then '/'
-              else '\\'
+    let pos' = fromJust $ getFirst $ mconcat $ map First $ map (`elemIndex` x) "C_"
+        sym = if pos < 0 || pos' == pos then '|' else if pos' < pos then '/' else '\\'
     in  (replaceChar x pos' sym):(race' xs pos')
 
 race :: [String] -> [String]
