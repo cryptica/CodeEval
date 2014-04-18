@@ -54,5 +54,5 @@ processInput input =
         in  unlines carTimesS
 
 main :: IO ()
-main = liftM processInput (liftM head getArgs >>= readFile) >>= putStrLn
+main = liftM processInput (liftM head getArgs >>= readFile) >>= putStr
 
