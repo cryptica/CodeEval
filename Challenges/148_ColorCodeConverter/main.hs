@@ -10,29 +10,8 @@ import Data.Bits
 import Data.Fixed
 
 import Data.Attoparsec.Char8
-import qualified Data.Attoparsec.ByteString as AB
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Char8 as BC
-
--- | Consume @n@ bytes of input, but succeed only if the predicate
--- returns 'True'.
-takeWith :: Int -> (Word8 -> Bool) -> Parser B.ByteString
-takeWith n p = do
-        s <- AB.take n
-        if B.all p s
-            then return s
-            else fail "takeWith"
-
--- | Parse and decode an unsigned hexadecimal number of length @n@.
-hexadecimalN :: (Integral a, Bits a) => Int -> Parser a
-hexadecimalN n = B.foldl' step 0 `fmap` takeWith n isHexDigit
-    where
-        isHexDigit w = (w >= 48 && w <= 57) ||
-                       (w >= 97 && w <= 102) ||
-                       (w >= 65 && w <= 70)
-        step a w | w >= 48 && w <= 57  = (a `shiftL` 4) .|. fromIntegral (w - 48)
-                 | w >= 97             = (a `shiftL` 4) .|. fromIntegral (w - 87)
-                 | otherwise           = (a `shiftL` 4) .|. fromIntegral (w - 55)
 
 data Color = HSL Float Float Float
            | HSV Float Float Float
@@ -104,9 +83,10 @@ parseCMYK = do
 parseHex :: Parser Color
 parseHex = do
         _ <- string "#"
-        r <- hexadecimalN 2
-        g <- hexadecimalN 2
-        b <- hexadecimalN 2
+        rgb <- hexadecimal :: Parser Word32
+        let r = fromIntegral $ (rgb .&. 0xFF0000) `shiftR` 16
+            g = fromIntegral $ (rgb .&. 0x00FF00) `shiftR`  8
+            b = fromIntegral $  rgb .&. 0x0000FF
         return $ RGB r g b
 
 parseRGB :: Parser Color
